@@ -60,11 +60,8 @@ namespace HomeExercises
 		 * Так как класс Person имеет односвязную структуру, то необходимо рекурсивно проверять родителей
 		 * Поэтому нужно разрешить бесконечную рекурсию с помощью AllowingInfiniteRecursion
 		 * Если исключить из сравнения только Id, то любые два родителя будут не эквивалентны, так как их Id разные
-		 * Исключить сравнение Id у всех Parent можно двумя способами
-		 * 1. Можно изменить сравнение Id у всех Parent так, чтобы любые два Id были одинаковыми
-		 * Я сделал так, чтобы два разных Id сравнивались по типу данных, что в данном случае всегда будут совпадать
-		 * 2. Можно исключить все свойства заканчивающиеся на .Id
-		 * В данном случае такие свойства как Parent.Id, Parent.Parent.Id и так далее будут удовлетворять данному условию, и исключаться из сравнения
+		 * Чтобы исключить свойство Id у всех родителей, можно исключить все свойства заканчивающиеся на Parent.Id
+		 * Таким образом у каждого Parent исключится из сравнения свойство Id
          */
 		private Person expectedTsar;
 		private Person actualTsar;
@@ -80,20 +77,10 @@ namespace HomeExercises
 		[Test]
 		public void CompareTsars()
 		{
+			var nameOfParentId = nameof(actualTsar.Parent) + "." + nameof(actualTsar.Parent.Id);
 			expectedTsar.ShouldBeEquivalentTo(actualTsar, options => options
-				.AllowingInfiniteRecursion()
-				.Excluding(thar => thar.Id)
-				.Using<Person>(info => info.Subject.Id.Should().BeOfType(info.Expectation.Id.GetType()))
-				.WhenTypeIs<Person>());
-		}
-
-		[Test]
-		public void CompareTsars2()
-		{
-			expectedTsar.ShouldBeEquivalentTo(actualTsar, options => options
-				.AllowingInfiniteRecursion()
-				.Excluding(thar => thar.Id)
-				.Excluding(thar => thar.SelectedMemberPath.EndsWith(".Id")));
+				.Excluding(tsar => tsar.Id)
+				.Excluding(tsar => tsar.SelectedMemberPath.EndsWith(nameOfParentId)));
 		}
 
 	}
