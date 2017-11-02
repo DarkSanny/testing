@@ -77,10 +77,8 @@ namespace HomeExercises
 		[Test]
 		public void CompareTsars()
 		{
-			var nameOfParentId = nameof(actualTsar.Parent) + "." + nameof(actualTsar.Parent.Id);
 			expectedTsar.ShouldBeEquivalentTo(actualTsar, options => options
-				.Excluding(tsar => tsar.Id)
-				.Excluding(tsar => tsar.SelectedMemberPath.EndsWith(nameOfParentId)));
+				.Excluding(tsar => tsar.SelectedMemberInfo.Name == nameof(Person.Id) && tsar.SelectedMemberInfo.DeclaringType == typeof(Person)));
 		}
 
 	}
